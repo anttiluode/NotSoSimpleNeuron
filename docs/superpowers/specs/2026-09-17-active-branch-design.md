@@ -58,27 +58,51 @@ The active cable should classify all four using the same scalar readout: total b
 - **Linear point control:** positive and negative input centroids must match exactly, and the score-sum identity above must hold for arbitrary test weights.
 - **No-active-current ablation:** setting `gain=0` must remove the close/far separation in total branch response.
 - **Position translation:** the same mechanism must work for multiple interior choices of `a,b`.
-- **Parameter worlds:** the gate must survive 64 deterministic worlds varying passive leak/coupling and active threshold/slope/gain within a fixed predeclared range.
 
-## Frozen v1 success rule
+## Nominal gate and stress sweep
 
-For every one of 64 deterministic worlds:
+A scratch calculation before production implementation exposed an important boundary in the originally proposed broad parameter sweep: when coupling is weak and threshold is low, both nearby and crossed patterns can open the voltage gate. Once both are saturated, the lower-voltage crossed pattern can receive *more* current because it has more reversal headroom. That is a real property of this mechanism, not a nuisance to tune away.
 
-1. passive total-response close/far gap `< 1e-12`;
-2. active minimum positive score is greater than active maximum negative score;
-3. class centroids match within `1e-12`;
-4. gain-zero ablation has close/far gap `< 1e-12`.
+Therefore v1 has two receipts:
 
-Aggregate receipt records the worst active margin and mean active close/far ratio.
+### Nominal 64-world gate
+
+The passive cable is fixed at `leak=0.08`, `coupling=0.18`. Across deterministic seeds we vary:
+
+- threshold `[0.315, 0.325]`;
+- slope `[0.015, 0.025]`;
+- gain `[0.6, 1.2]`;
+- the two translated interior neighborhoods.
+
+All 64 nominal worlds must satisfy:
+
+1. passive close/far total-response gap `< 1e-12`;
+2. active minimum positive score `>` active maximum negative score;
+3. class centroid gap `< 1e-12`;
+4. gain-zero close/far gap `< 1e-12`.
+
+### Broad 64-world stress sweep
+
+We deliberately vary beyond the clean operating regime:
+
+- leak `[0.04, 0.12]`;
+- coupling `[0.12, 0.24]`;
+- threshold `[0.30, 0.34]`;
+- slope `[0.012, 0.025]`;
+- gain `[0.6, 1.2]`.
+
+This sweep is **characterization, not a pass-all gate**. The receipt records pass fraction, worst margin, and the parameters of any reversal worlds. We keep those failures because they identify when local voltage selectivity collapses into saturation/reversal-headroom behavior.
 
 ## Interpretation limit
 
-Passing v1 would establish only this synthetic mechanism claim:
+Passing the nominal gate would establish only this synthetic mechanism claim:
 
-> local cable pooling plus a voltage-dependent conductance can create a cheap nonlinear spatial coincidence feature that a single linear-threshold point unit cannot perfectly reproduce.
+> local cable pooling plus a voltage-dependent conductance can create a cheap nonlinear spatial coincidence feature that a single linear-threshold point unit cannot perfectly reproduce, over a finite operating regime.
 
-It would not establish that biological dendrites use this exact rule, that dendrites are generally superior to multilayer point networks, or that the mechanism is novel in computational neuroscience.
+The broad stress sweep explicitly prevents the stronger claim that the mechanism is universally adjacency-selective.
+
+It would not establish that biological dendrites use this exact rule, that dendrites are generally superior to multilayer point networks, or that the mechanism is novel in computational neuroscience. A two-layer point network can implement the same kind of interaction; the question here is whether putting the nonlinearity locally on the branch gives our synthetic architecture a useful factorization.
 
 ## Next gate
 
-Only after v1 passes do we build a bank/ring of several branches and allow one route to own contacts across branches.
+Only after v1 is characterized do we build a bank/ring of several branches and allow one route to own contacts across branches.
