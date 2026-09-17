@@ -1,0 +1,53 @@
+{
+  "active": {
+    "ab_operator_norm": 2.7049663180607726,
+    "ba_operator_norm": 3.277752468036684,
+    "chain_rule_relative_error": 9.548008249843895e-07,
+    "sequence_jacobian_gap_ratio": 0.6013610367666856,
+    "single_fixed_operator_relative_error": 0.29931187598434617
+  },
+  "claim_boundary": {
+    "active_sequence_uses_context_specific_operator_composition": true,
+    "chain_rule_is_a_consistency_check_not_a_novel_theorem": true,
+    "different_final_states_alone_are_not_the_claim": true,
+    "gain_zero_keeps_history_but_uses_one_fixed_local_operator": true,
+    "note": "This deterministic synthetic witness shows that the current active branch requires context-specific local Jacobians to describe sequence response. It does not establish unique dendritic expressivity or biological implementation."
+  },
+  "configuration": {
+    "compartments": 6,
+    "conductance_decay": 0.65,
+    "coupling": 0.18,
+    "event_a_position": 1,
+    "event_amplitude": 0.4,
+    "event_b_position": 2,
+    "extended_state_size": 12,
+    "finite_difference_epsilon": 1e-06,
+    "initial_conductance": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "initial_voltage": [
+      0.0,
+      0.05,
+      0.1,
+      0.05,
+      0.0,
+      0.0
+    ],
+    "leak": 0.08,
+    "slope": 0.03,
+    "threshold": 0.32
+  },
+  "control": {
+    "ab_operator_norm": 1.6696889470394596,
+    "ba_operator_norm": 1.6696889470470164,
+    "chain_rule_relative_error": 7.070148147655774e-11,
+    "sequence_jacobian_gap_ratio": 7.201055911449047e-11,
+    "single_fixed_operator_relative_error": 3.600527955724523e-11
+  },
+  "verdict": "PASS_STATE_CONDITIONED_OPERATOR_COMPOSITION"
+}
