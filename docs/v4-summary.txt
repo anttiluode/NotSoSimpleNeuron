@@ -1,0 +1,1 @@
+v4 claim boundary: a raw A->B versus B->A state difference is not enough; the scientific result is the active first-event Jacobian change and nonzero commutator relative to the gain-zero fixed-operator control.
