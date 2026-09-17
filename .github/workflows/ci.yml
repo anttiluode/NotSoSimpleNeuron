@@ -21,3 +21,4 @@ jobs:
       - run: python experiments/run_v0.py --seeds 4 --train-steps 120 --out /tmp/not_so_simple_smoke.json
       - run: python experiments/run_frequency_gate.py --out /tmp/not_so_simple_frequency.json
       - run: python experiments/run_v1.py --seeds 4 --out /tmp/not_so_simple_v1_smoke.json
+      - run: python experiments/run_operator_gate.py --out /tmp/not_so_simple_operator.json
