@@ -1,22 +1,27 @@
 # NotSoSimpleNeuron
 
-> **A tiny routed event can acquire meaning from where it lands, when it lands, and what local state it encounters.**
+> **A tiny routed event can acquire meaning from where it lands, when it lands, what local state it encounters, and what happened immediately before it.**
 
-This repo starts from a question that fell out of `SimpleNeuron`:
+This repository starts from a question that fell out of [`SimpleNeuron`](https://github.com/anttiluode/SimpleNeuron):
 
 > If an axonal event is nearly binary, how could it steer a receiver along a high-dimensional direction?
 
-The project now has three deliberately separate mechanism witnesses:
+The answer has become deliberately more precise as attackers remove weaker stories. A route is not being treated as a magic vector-valued synapse. It is a sparse physical access pattern into receiver dynamics. The effective transformation can depend on spatial landing pattern, event timing, resident state, and event order.
 
-1. **spatial addressing** — one route owns several ordinary scalar contacts on a passive cable;
-2. **temporal addressing** — the same landing site responds differently to different ping timing, and one recovery state creates genuine non-zero-frequency preference;
-3. **active local interaction** — nearby equal-charge inputs recruit a local voltage-dependent conductance that crossed inputs do not.
+The project currently has six separate gates:
 
-The point is not to make a neuron complicated because biology is complicated. Every extra mechanism gets an attacker and has to earn a role.
+1. **distributed spatial route** — several ordinary scalar contacts on one passive cable;
+2. **temporal addressing** — timing is decoded by receiver dynamics, although a point resonator beats the single-site cable;
+3. **active local interaction** — nearby equal-charge inputs recruit a local voltage-dependent interaction that passive superposition cannot;
+4. **operator-valued route** — one unchanged route exposes different effective branch-state directions across frequency;
+5. **modal boundary** — the full linear/quasi-active cable bank is exactly a modal state-space realization, while local active state breaks the fixed modal decomposition;
+6. **event-order gate** — the first event changes the local operator encountered by the second, producing noncommuting local Jacobians in the synthetic active branch.
+
+Every extra mechanism gets a control or attacker. Negative boundaries stay in the result.
 
 ---
 
-## v0 — a route can be a distributed spatial vector
+## v0 — distributed scalar contacts become a route-level vector
 
 One route owns several ordinary non-negative scalar contacts at different positions on a passive dendritic cable:
 
@@ -24,286 +29,300 @@ One route owns several ordinary non-negative scalar contacts at different positi
 route r = {(position_j, weight_j)}
 ```
 
-The route event carries only a scalar and the branch evolves as
+The branch evolves as
 
 ```text
 x[t+1] = A @ x[t] + u_r q[t]
 ```
 
-where `A` is a stable passive cable operator. In the cable eigenbasis,
+where `A` is a stable passive cable operator. In its eigenbasis,
 
 ```text
 z = Phi.T @ u_r
 ```
 
-so a sparse landing pattern acquires a modal fingerprint because of **where** its contacts land. The event does not contain the vector; receiver geometry supplies the expansion.
+so a sparse landing pattern acquires a modal fingerprint because of **where** its contacts land. The event does not carry the vector; the receiver supplies the expansion.
 
-### Important language
-
-The v0 cable is a **passive damped cable**, not a literal resonant string. Its spatial modes have different decay factors. Passive dynamics can filter temporal patterns, but their local transfer is low-pass rather than genuinely band-resonant.
-
-Likewise, v0 does **not** claim that one biological synapse stores a vector. Each contact stores one scalar. The route-level pattern is distributed across several contacts.
-
-### Post-Oja-like spatial learning
-
-The first learning rule is intentionally simpler than Oja's rule. When route `r` is active while the local branch has state `x`, each contact sees the common presynaptic event and only its local postsynaptic value:
+The local learning rule is intentionally simpler than Oja:
 
 ```text
 w_j <- max(0, w_j + eta * event * x[position_j])
 normalize route weights to sum to one
 ```
 
-This is best described as **route-conditioned spatial Hebbian plasticity with a homeostatic resource constraint**. It is not claimed to be biological Oja learning or PCA.
+It is best described as **route-conditioned spatial Hebbian plasticity with a resource constraint**, not biological Oja learning or PCA.
 
-The useful interpretation is
-
-```text
-repeated route/state pairing
-        |
-        v
-redistribute ordinary scalar synapses in space
-        |
-        v
-later binary ping excites a learned cable response
-```
-
-### Frozen v0 result
-
-`results/v0.json` is a frozen aggregate receipt from 64 deterministic seeds.
-
-| Gate | Result |
-|---|---:|
-| Cable invariants | `PASS_CABLE_INVARIANTS` |
-| Equal-charge spatial routes remain distinguishable | `PASS_GEOMETRY_EXPANDS_PING` |
-| Distributed scalar learning beats shuffle + best single site | `PASS_DISTRIBUTED_SCALAR_LEARNING` |
-| Soft temporal knee retains its narrow clustering role | `KNEE_RETAINS_ROLE` |
-
-Selected 64-seed results:
+Frozen 64-seed highlights from `results/v0.json`:
 
 - spatial response separation: **0.278776**;
 - modal-fingerprint separation: **0.932674**;
-- paired local weight-pattern alignment: **0.999930 mean**;
-- shuffled alignment: **0.711677 mean**;
-- paired minus shuffle: **+0.288253 mean**, **+0.169552 worst seed**;
-- learned multi-site response alignment: **0.980079 mean**;
-- best single landing-site attacker: **0.683739**;
-- multi-site advantage over best single site: **+0.296340 mean**;
-- soft-knee / linear close-pair gain: **3.85612x** with matched first-pulse gain.
+- learned multi-site response alignment: **0.980079**;
+- best single-site attacker: **0.683739**;
+- multi-site advantage: **+0.296340**;
+- paired local weight-pattern alignment: **0.999930**;
+- shuffled alignment: **0.711677**.
 
-The result is a constructed mechanism witness. Training supplies route-specific spatial states, and the local rule learns which of six candidate contact positions are repeatedly active. It does not show that real dendrites learn eigenmodes this way.
+A dense vector lookup can reproduce a fixed injection exactly. The surviving claim is therefore narrow:
 
-### v0 attackers
-
-A **point scalar attacker** sees only total route charge. Both routes sum to one, so it sees no difference.
-
-A **best single-site attacker** can choose the one contact position whose cable response best matches each target. It reaches `0.683739` mean alignment; six learned scalar contacts reach `0.980079`.
-
-A **dense vector lookup** can reproduce any fixed injection exactly. Therefore the claim is not “dendrites compute something vectors cannot.” It is narrower:
-
-> **spatially distributed scalar contacts plus a fixed cable give a structured receiver-side expansion of a tiny routed event.**
+> **distributed scalar contacts plus a fixed cable provide a structured receiver-side expansion of a tiny routed event.**
 
 ---
 
-## Frequency gate — where is the signal if the ping is tiny?
+## Frequency gate — timing is signal, but resonance alone does not earn morphology
 
-A near-binary event can still participate in a rich signal because information can live in **when events arrive**.
-
-In modal coordinates, a passive mode obeys approximately
+A passive cable mode behaves approximately as
 
 ```text
 z_n[t+1] = lambda_n z_n[t] + b_n q[t]
 ```
 
-so `lambda_n` sets a memory timescale. A passive cable is therefore not only a spatial expander; it is also a bank of leaky temporal filters addressed by landing position.
+so each mode is a leaky temporal filter. Passive decay is not resonance: its response peaks at DC.
 
-But passive decay is not resonance. Its local frequency response peaks at DC.
-
-### Add one recovery state
-
-The frequency gate adds exactly one synthetic recovery variable per compartment:
+The frequency gate adds one synthetic recovery variable per compartment:
 
 ```text
 v[t+1] = A v[t] - g_w w[t] + u[t]
 w[t+1] = alpha w[t] + beta v[t]
 ```
 
-This is a minimal quasi-active resonator, not a detailed model of `I_h`, potassium, calcium, or NMDA currents.
-
-The frozen nominal branch has spectral radius **0.900555** and a real non-zero response peak:
+The quasi-active cable develops a genuine non-zero response peak:
 
 | Quantity | Result |
 |---|---:|
 | passive peak frequency | **0.000000 rad/step** |
-| passive peak/DC | **1.0000x** |
 | quasi-active peak frequency | **0.319068 rad/step** |
 | quasi-active peak period | **19.6923 steps** |
 | quasi-active peak/DC | **1.9191x** |
 
-`results/frequency_gate.json` also uses literal ping trains. Every condition receives **24 identical pings at the same compartment** and therefore exactly the same event count and total charge. Only inter-ping interval changes.
+With the same landing site, same event amplitude, same 24 pings and same total charge, changing only the inter-ping interval reverses preference relative to the passive cable.
 
-The passive cable prefers the dense train by accumulation:
+But the matched conceptual attacker matters more: a tuned two-state point resonator reaches **3.2023x peak/DC**, beating the single-site quasi-active cable's **1.9191x**.
 
-```text
-interval 4:  mean post-ping voltage 1.528779
-interval 20: mean post-ping voltage 1.031269
-fast - slow: +0.497510
-```
+So:
 
-The quasi-active receiver reverses that preference near its resonant period:
-
-```text
-interval 4:  mean post-ping voltage 0.879470
-interval 20: mean post-ping voltage 1.026526
-slow - fast: +0.147056
-```
-
-So the temporal statement survives:
-
-> **the ping need not carry a frequency label; receiver state can decode the timing of repeated tiny events.**
-
-### The point attacker wins this gate
-
-This control matters more than the positive result.
-
-A tuned **two-state point resonator** gets the same recovery mechanism but no cable geometry. It is allowed to tune its scalar persistence over a fixed grid.
-
-| Model | peak/DC |
-|---|---:|
-| quasi-active cable, one landing/readout site | **1.9191x** |
-| tuned two-state point attacker | **3.2023x** |
-
-The point attacker therefore reports `POINT_MATCHES_OR_BEATS`.
-
-That means **frequency resonance alone does not earn dendritic morphology**. Temporal addressing is a property of suitable receiver dynamics in general.
-
-The stronger hypothesis now becomes spatio-temporal rather than merely resonant:
-
-```text
-route meaning
-    =
-where its contacts land
-    x
-when its pings arrive
-    x
-what local dynamics live at those sites
-```
-
-A dendrite gets another chance to matter when one route owns multiple contacts across locations or branches with different transfer functions, not when one compartment merely rings.
+> **timing can carry information, but resonance by itself is not a dendrite-specific computational advantage.**
 
 ---
 
-## v1 active branch — local spatial coincidence changes the computation
+## v1 — local active state creates a spatial interaction
 
-Frequency selection is kept separate from the active nonlinear gate.
+`ActiveCableBranch` adds a local excitatory conductance trace, voltage-dependent sigmoid gate and saturating reversal term. It is a synthetic NMDA-like mechanism, not a detailed receptor model.
 
-`ActiveCableBranch` adds a local excitatory conductance trace, a voltage-dependent sigmoid gate, and a saturating reversal term. It is intentionally a synthetic NMDA-like mechanism, not a detailed receptor model.
-
-The key test is a balanced spatial XOR construction on a 12-compartment cable:
+The balanced construction compares nearby pairs against crossed pairs while holding total charge and class centroid fixed:
 
 ```text
-positive class: nearby pair A+A1 OR nearby pair B+B1
-negative class: crossed pair A+B OR crossed pair A1+B1
+positive: A+A1 or B+B1
+negative: A+B  or A1+B1
 ```
 
-All four patterns carry equal total charge. The two classes also have **exactly the same spatial centroid**. Consequently:
+The passive cable and gain-zero ablation have no class mean gap. The local active mechanism can distinguish the patterns because nearby inputs jointly raise local voltage and recruit more local conductance.
 
-- the passive cable has no class mean gap;
-- setting active gain to zero removes the gap;
-- the balanced construction gives any one linear projection a score-sum identity, so a single linear score followed by a monotone threshold cannot perfectly solve the four-pattern problem.
-
-The local active mechanism can distinguish nearby from crossed excitation because nearby inputs jointly raise local voltage and therefore recruit more local conductance.
-
-### Frozen 64-world result
-
-`results/v1.json` keeps both a nominal regime and a deliberately broader stress range.
+Frozen `results/v1.json`:
 
 | Metric | nominal | stress |
 |---|---:|---:|
 | pass count | **64/64** | **63/64** |
 | mean active margin | **0.429997** | **0.398905** |
 | worst active margin | **0.302040** | **-0.011669** |
-| mean active ratio | **1.431748** | **1.403979** |
 | max passive gap | **0** | **~1.1e-16** |
-| max gain-zero gap | **0** | **~1.1e-16** |
 
-The stress reversal is retained rather than tuned away: seed 25 crosses the boundary under low coupling/gain and gives active margin `-0.011669`.
-
-So v1 establishes a limited claim:
-
-> **local spatial state plus a voltage-dependent local mechanism can implement an interaction that disappears under passive superposition and under gain-zero ablation.**
-
-It does not establish that this synthetic conductance is the best way to compute the task, nor that a richer point model could never reproduce it.
+The one stress reversal is retained rather than tuned away.
 
 ---
 
-## What the machine is becoming
+## v2 — one route exposes a family of effective operators
 
-The three gates now give different jobs to different pieces:
+The next machine uses **four short quasi-active branches around one readout**. A route owns sparse contacts across those branches. The combined linear state-space model is
 
 ```text
-                 tiny routed events
-                        |
-                        v
-             spatial contact pattern       <- v0: where
-                        |
-                        v
-           local temporal dynamics         <- frequency gate: when
-                        |
-                        v
-       local voltage-dependent interaction <- v1: current local context
-                        |
-                        v
-                 branch states
-                        |
-                        v
-                    SOMA MIX
-                        |
-                        v
-                       AIS
-                        |
-                        v
-                 tiny routed events
+x[t+1] = A x[t] + b_r u[t]
+y[t]   = C x[t]
 ```
 
-A useful shorthand is therefore
+and the route's frequency-dependent effective transformation is
+
+```text
+h_r(omega) = C (exp(i*omega) I - A)^-1 b_r
+```
+
+This is the useful sense in which the route has access to an **operator-valued weight**: the physical route is unchanged, but its effective branch-state direction depends on receiver dynamics and temporal frequency.
+
+Frozen `results/operator_gate.json`:
+
+- route-0 direction rotation between `omega=0.08` and `0.62`: **70.779°**;
+- one static complex route-to-branch matrix, held-frequency relative error: **0.895145**;
+- compact four-resonator / eight-state point bank relative error: **0.634528**;
+- dendritic state count: **48** versus point-bank state count: **8**.
+
+The compact point bank improves substantially but is not a fair same-state morphology attacker. More importantly, an unconstrained degree-matched linear state-space realization can reproduce the transfer exactly. v2 therefore does **not** establish unique linear expressivity.
+
+The surviving statement is:
+
+> **a fixed sparse route can expose different effective directions across time/frequency because it accesses a shared dynamical operator.**
+
+---
+
+## v3 — the exact modal boundary
+
+v3 asks whether the 48-state linear/quasi-active branch bank is actually anything more than a state-space basis choice.
+
+It is not.
+
+Branch by branch, an orthogonal similarity transform converts the cable coordinates into independent modal sections. There is no fit and no optimizer. Across 81 frequencies:
+
+- maximum transfer mismatch: **4.56e-15**;
+- maximum cross-mode leakage in the transformed linear system: **4.53e-16**.
+
+So within floating-point precision:
+
+```text
+linear/quasi-active dendritic bank
+        ==
+modal resonator bank
+under a change of coordinates
+```
+
+That kills the stronger claim that linear cable morphology itself gives unique expressivity.
+
+The boundary changes when the existing local voltage-dependent gate is turned on. Numerical linearization of the same physical branch gives:
+
+- gain-zero cross-mode ratio: **2.30e-11**;
+- active cross-mode ratio: **0.582296**;
+- changing only resident voltage state rotates the local Jacobian by **34.317°**;
+- relative Jacobian change: **1.164292**.
+
+This is the sharper result:
+
+```text
+fixed linear machine:       x -> A -> next x
+active state-dependent one: x -> J(x) -> next x -> new J(x)
+```
+
+A fixed modal bank is globally exact for the first case. In the second case, physical locality creates state-conditioned cross-mode coupling.
+
+This still does not prove that morphology is uniquely efficient. It identifies where the exact fixed-LTI equivalence stops applying.
+
+---
+
+## v4 — A then B is not merely B then A with labels swapped
+
+A raw `A -> B` versus `B -> A` difference is **not** enough to claim noncommutativity. Even a fixed linear dynamical cable is order-sensitive because the first event receives one extra propagation/decay step.
+
+So v4 keeps that as the gain-zero control and asks two stricter questions:
+
+1. does the active branch add an order interaction beyond the linear sequence difference?
+2. after A versus B arrives first, do the resulting local Jacobians themselves fail to commute?
+
+For local Jacobians `J_A` and `J_B`, the diagnostic is
+
+```text
+[J_A, J_B] = J_A J_B - J_B J_A
+```
+
+Frozen deterministic `results/order_gate.json`:
+
+| Quantity | Gain-zero control | Active branch |
+|---|---:|---:|
+| sequence-order gap | **0.116078** | **0.271040** |
+| commutator ratio | **7.86e-12** | **0.129339** |
+| first-event operator angle | **0.000°** | **12.935°** |
+
+Additional active measurements:
+
+- active/control sequence-gap ratio: **2.335x**;
+- nonlinear order excess norm: **0.160375**;
+- first-event relative operator change: **0.247862**.
+
+The gain-zero machine therefore has ordinary dynamical sequence memory but a fixed local operator. The active machine adds a state-conditioned operator change: event A changes the local machine encountered by B differently from event B changing the machine encountered by A.
+
+The earned claim is deliberately concrete:
+
+> **in this synthetic active branch, event order changes the effective computation because the first event changes the local operator seen by the second.**
+
+This is a deterministic mechanism witness. It does not establish that real dendrites implement this exact gate, and it does not establish that dendritic morphology is uniquely required for order-sensitive computation.
+
+---
+
+## What carries the load now?
+
+The project began by asking what replaces a conventional scalar/vector "weight" when the travelling event itself is tiny.
+
+The current decomposition is:
+
+```text
+route identity
+    |
+    +-- spatial contact pattern          where
+    +-- ping timing                      when
+    +-- shared receiver dynamics         transfer family
+    +-- resident local state             current susceptibility
+    +-- immediately previous events      operator context
+    |
+    v
+effective operation on the present machine
+```
+
+A useful shorthand is no longer `route -> weight`. It is closer to
+
+```text
+route r invokes O_r[x, history]
+```
+
+or, locally,
+
+```text
+H_r(omega | x) = C(x) (exp(i*omega) I - J(x))^-1 B_r(x)
+```
+
+That notation is a description of the synthetic machine, not a biological identity claim.
+
+The important factorization is:
 
 ```text
 small thing travels;
 large state stays;
 landing geometry expands;
 timing selects dynamics;
-local state changes susceptibility.
+local state changes the operator;
+event order changes what the next event encounters.
 ```
-
-That is more interesting than “a synapse stores a vector,” but it is also more falsifiable.
 
 ---
 
-## Next gates
+## Next honest gates
 
-The next additions stay ordered so complexity has to earn itself:
+The completed gates have progressively removed easy stories:
 
-1. ~~**Distributed spatial route**~~ — several scalar contacts on one passive cable. **DONE: v0.**
-2. ~~**Temporal/frequency addressing**~~ — passive low-pass versus quasi-active resonance versus point attacker. **DONE: point attacker wins the morphology comparison.**
-3. ~~**Active local interaction**~~ — nearby/crossed equal-charge patterns versus passive and gain-zero controls. **DONE: 64/64 nominal, 63/64 stress.**
-4. **Branch bank / dendrite ring** — several short cables around one soma; one route owns contacts across multiple branches.
-5. **Spatio-spectral route** — give branches different local time constants/resonances and ask whether a sparse distributed route can exploit `where x when` more cheaply than a matched point/vector bank.
-6. **Dendritic inhibition** — SOM-like local gating asks which branch/pathway is allowed into the mixture.
-7. **Perisomatic correction** — PV/basket-like inhibition modifies the soma calculation without erasing branch state.
-8. **Spatial AIS** — proximal/distal AIS compartments plus chandelier-like inhibition; test whether inhibitory landing position is functionally non-equivalent.
-9. **Growth-to-purity** — only then permit structural growth, retaining added cable only when held-out separation improves against matched attackers.
+1. ~~distributed spatial route~~ — **DONE**;
+2. ~~frequency addressing~~ — **DONE; point resonator wins the simple resonance comparison**;
+3. ~~local active interaction~~ — **DONE**;
+4. ~~branch bank / operator-valued route~~ — **DONE**;
+5. ~~exact modal realization boundary~~ — **DONE; linear morphology is a basis/realization, not unique expressivity**;
+6. ~~state-conditioned event order~~ — **DONE; active local Jacobians differ and fail to commute in the frozen fixture**.
 
-The immediate next experiment should therefore combine the two things that independently survived: **distributed spatial contacts + temporal dynamics**. If a matched bank of point resonators still wins at equal state/parameter budget, the dendritic story gets cut back again.
+The next useful fight is to combine v1 and v2 rather than add decorative biology:
+
+7. **distributed nonlinear branch bank** — let one sparse route touch several branches, each with local active state, and test whether the resulting state-conditioned operator family can be matched by a degree/parameter-matched non-spatial nonlinear state-space attacker;
+8. **local inhibition** — only if gate 7 survives, add SOM-like branch gating and ask whether it selectively changes which local operator participates;
+9. **perisomatic correction** — PV/basket-like control of the soma mixture without erasing branch state;
+10. **spatial AIS** — proximal/distal AIS plus chandelier-like inhibition, explicitly testing whether landing position is functionally non-equivalent;
+11. **growth-to-purity** — permit structural growth only when an added physical degree of freedom improves held-out separation against matched attackers.
+
+The next scientific target is therefore not "more resonance." It is whether **physical locality makes a state-dependent operator cheaper or more naturally factorized than an equally capable non-spatial dynamical model**.
 
 ---
 
 ## Papers anchoring the exploration
 
-- Yang, Murray & Wang (2016), **A dendritic disinhibitory circuit mechanism for pathway-specific gating**, *Nature Communications* 7:12815. Dendritic branches as quasi-independent nonlinear processors; pathway clustering and branch-local disinhibition.
-- Leterrier (2018), **The Axon Initial Segment: An Updated Viewpoint**, *Journal of Neuroscience* 38(9):2135-2145. AIS architecture, polarity and morphological plasticity.
-- Fréal & Hoogenraad (2025), **The dynamic axon initial segment: From neuronal polarity to network homeostasis**, *Neuron* 113. AIS subcompartments, activity-dependent structural/molecular plasticity and axo-axonic innervation.
-- Brette (2025), **Theory of axo-axonic inhibition**, *PLOS Computational Biology* 21(4):e1013047. Quantitative position-sensitive theory for chandelier/AIS inhibition.
-- Koch & Poggio (1985), **A simple algorithm for solving the cable equation in dendritic trees of arbitrary geometry**, *Journal of Neuroscience Methods* 12(4):303-315. Transfer impedance in branched passive cables.
+- Yang, Murray & Wang (2016), **A dendritic disinhibitory circuit mechanism for pathway-specific gating**, *Nature Communications* 7:12815.
+- Leterrier (2018), **The Axon Initial Segment: An Updated Viewpoint**, *Journal of Neuroscience* 38(9):2135-2145.
+- Fréal & Hoogenraad (2025), **The dynamic axon initial segment: From neuronal polarity to network homeostasis**, *Neuron* 113.
+- Brette (2025), **Theory of axo-axonic inhibition**, *PLOS Computational Biology* 21(4):e1013047.
+- Koch & Poggio (1985), **A simple algorithm for solving the cable equation in dendritic trees of arbitrary geometry**, *Journal of Neuroscience Methods* 12(4):303-315.
+
+These papers motivate mechanisms and controls; they are not treated as validation of this synthetic architecture.
+
+---
 
 ## Run it
 
@@ -314,15 +333,14 @@ pytest -q
 python experiments/run_v0.py --seeds 64 --out results/v0_full.json
 python experiments/run_frequency_gate.py --out results/frequency_gate_full.json
 python experiments/run_v1.py --seeds 64 --out results/v1_full.json
+python experiments/run_operator_gate.py --out results/operator_gate_full.json
+python experiments/run_modal_boundary.py --out results/modal_boundary_full.json
+python experiments/run_order_gate.py --out results/order_gate_full.json
 ```
 
-For CI-sized smoke runs:
+CI runs Python 3.11 and 3.12 and executes smoke runs for all six gates.
 
-```bash
-python experiments/run_v0.py --seeds 4 --train-steps 120 --out /tmp/v0.json
-python experiments/run_frequency_gate.py --out /tmp/frequency.json
-python experiments/run_v1.py --seeds 4 --out /tmp/v1.json
-```
+---
 
 ## Relationship to SimpleNeuron
 
@@ -336,17 +354,20 @@ route k -> B_k -> resident state
 
 ```text
 route k
-   -> scalar contacts {(position, weight)}
-   -> ping timing
-   -> local cable / recovery / active state
-   -> effective high-dimensional steering and interaction
+   -> ordinary scalar contacts
+   -> spatial landing pattern
+   -> timing
+   -> cable / recovery / active local state
+   -> state-conditioned effective operation
 ```
 
-The current evidence says the answer is nuanced:
+The current evidence is intentionally mixed:
 
-- **space matters** when one route distributes ordinary scalar contacts across several locations;
+- **space matters** for distributing ordinary scalar contacts;
 - **time matters**, but a point resonator can decode it too;
-- **local nonlinear interaction matters** on the balanced nearby-versus-crossed construction;
-- morphology has not yet earned a universal computational advantage.
+- **linear cable dynamics are exactly realizable in modal coordinates**;
+- **local nonlinear state breaks the globally fixed modal decomposition**;
+- **event order changes the local active operator in the frozen synthetic gate**;
+- morphology still has **not** earned a universal computational advantage.
 
-That is exactly the standard this repo is meant to enforce.
+That is the standard this repository is meant to enforce.

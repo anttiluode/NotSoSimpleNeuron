@@ -1,0 +1,41 @@
+{
+  "active": {
+    "commutator_ratio": 0.12933918442566464,
+    "first_event_operator_angle_degrees": 12.934668637639662,
+    "first_event_relative_operator_change": 0.24786206530567606,
+    "nonlinear_order_excess_norm": 0.1603751456575798,
+    "sequence_order_gap": 0.27103976088168497
+  },
+  "claim_boundary": {
+    "active_first_event_operators_fail_to_commute": true,
+    "active_state_changes_local_operator": true,
+    "linear_sequence_order_can_exist": true,
+    "note": "This is a deterministic synthetic mechanism witness. It does not establish that biological dendrites use this exact gate or that morphology is uniquely required for order-sensitive computation.",
+    "raw_ab_vs_ba_difference_alone_proves_noncommutativity": false
+  },
+  "configuration": {
+    "compartments": 6,
+    "conductance_decay": 0.65,
+    "coupling": 0.18,
+    "event_a_position": 1,
+    "event_amplitude": 0.4,
+    "event_b_position": 2,
+    "initial_state": [
+      0.0,
+      0.05,
+      0.1,
+      0.05,
+      0.0,
+      0.0
+    ],
+    "leak": 0.08,
+    "slope": 0.03,
+    "threshold": 0.32
+  },
+  "control": {
+    "gain_zero_commutator_ratio": 7.860582518192614e-12,
+    "gain_zero_first_event_operator_angle_degrees": 0.0,
+    "gain_zero_sequence_order_gap": 0.11607820811849229
+  },
+  "verdict": "PASS_STATE_CONDITIONED_EVENT_ORDER"
+}
