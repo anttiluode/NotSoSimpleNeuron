@@ -1,1 +1,0 @@
-Temporary RED marker: `tests/test_operator_bank.py` was intentionally added before the implementation. The feature branch continues from this commit and will remove the need for this marker before merge.
