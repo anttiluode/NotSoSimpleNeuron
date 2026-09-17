@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from .active import ActiveCableBranch
 from .operator_bank import BranchBank
 
 
@@ -41,9 +42,9 @@ def modal_realization(bank: BranchBank) -> ModalRealization:
     """Rewrite a BranchBank in independent cable-mode coordinates.
 
     Each passive cable operator is symmetric, so its orthonormal eigenvectors
-    diagonalize the voltage dynamics.  Applying the same spatial basis to the
+    diagonalize the voltage dynamics. Applying the same spatial basis to the
     recovery variables turns every quasi-active branch into independent
-    two-state modal sections.  This is a pure change of coordinates, not a fit.
+    two-state modal sections. This is a pure change of coordinates, not a fit.
     """
     transforms: list[np.ndarray] = []
     branch_slices: list[slice] = []
@@ -80,3 +81,70 @@ def modal_realization(bank: BranchBank) -> ModalRealization:
         physical_from_modal=physical_from_modal,
         branch_mode_slices=tuple(branch_slices),
     )
+
+
+def _active_next_voltage(branch: ActiveCableBranch, state: np.ndarray) -> np.ndarray:
+    """Evaluate one zero-input active step from a fixed resident context."""
+    probe = ActiveCableBranch(
+        operator=branch.operator,
+        threshold=branch.threshold,
+        slope=branch.slope,
+        gain=branch.gain,
+        conductance_decay=branch.conductance_decay,
+        reversal=branch.reversal,
+        state=np.asarray(state, dtype=float),
+        conductance=np.asarray(branch.conductance, dtype=float),
+    )
+    return probe.step(np.zeros_like(probe.state))
+
+
+def active_modal_jacobian(branch: ActiveCableBranch, epsilon: float = 1e-6) -> np.ndarray:
+    """Local voltage Jacobian expressed in the passive cable eigenbasis.
+
+    Conductance context and all mechanism parameters are held fixed while the
+    resident voltage state is perturbed. In the gain-zero control this reduces
+    to the passive cable operator and is diagonal in the cable eigenbasis. A
+    local state-dependent active term can create cross-mode coupling.
+    """
+    if epsilon <= 0.0:
+        raise ValueError("epsilon must be positive")
+    operator = np.asarray(branch.operator, dtype=float)
+    if not np.allclose(operator, operator.T, atol=1e-12):
+        raise ValueError("active_modal_jacobian requires a symmetric cable operator")
+
+    state = np.asarray(branch.state, dtype=float)
+    baseline = _active_next_voltage(branch, state)
+    jacobian = np.empty((state.size, state.size), dtype=float)
+    for column in range(state.size):
+        perturbed = state.copy()
+        perturbed[column] += epsilon
+        jacobian[:, column] = (_active_next_voltage(branch, perturbed) - baseline) / epsilon
+
+    _, phi = np.linalg.eigh(operator)
+    return phi.T @ jacobian @ phi
+
+
+def modal_offdiagonal_ratio(matrix: np.ndarray) -> float:
+    """Frobenius fraction carried by cross-mode terms."""
+    M = np.asarray(matrix)
+    if M.ndim != 2 or M.shape[0] != M.shape[1]:
+        raise ValueError("matrix must be square")
+    norm = float(np.linalg.norm(M))
+    if norm == 0.0:
+        return 0.0
+    off = M - np.diag(np.diag(M))
+    return float(np.linalg.norm(off) / norm)
+
+
+def matrix_angle_degrees(first: np.ndarray, second: np.ndarray) -> float:
+    """Angle between two flattened local operators."""
+    a = np.asarray(first).reshape(-1)
+    b = np.asarray(second).reshape(-1)
+    if a.shape != b.shape:
+        raise ValueError("matrices must have matching shapes")
+    denom = float(np.linalg.norm(a) * np.linalg.norm(b))
+    if denom == 0.0:
+        raise ValueError("matrix angle is undefined for a zero matrix")
+    cosine = float(np.real(np.vdot(a, b)) / denom)
+    cosine = float(np.clip(cosine, -1.0, 1.0))
+    return float(np.degrees(np.arccos(cosine)))
