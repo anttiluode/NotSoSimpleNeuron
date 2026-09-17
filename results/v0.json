@@ -1,0 +1,60 @@
+{
+  "contacts_per_route": 6,
+  "metrics": {
+    "best_single_site_alignment": {
+      "max": 0.6837387821104106,
+      "mean": 0.6837387821104106,
+      "min": 0.6837387821104106
+    },
+    "knee_over_linear": {
+      "max": 3.8561217514575126,
+      "mean": 3.8561217514575126,
+      "min": 3.8561217514575126
+    },
+    "modal_fingerprint_separation": {
+      "max": 0.932674061586015,
+      "mean": 0.932674061586015,
+      "min": 0.932674061586015
+    },
+    "multisite_minus_single": {
+      "max": 0.29685846463251475,
+      "mean": 0.2963404006717202,
+      "min": 0.29580918032058723
+    },
+    "multisite_response_alignment": {
+      "max": 0.9805972467429254,
+      "mean": 0.9800791827821308,
+      "min": 0.9795479624309978
+    },
+    "paired_alignment": {
+      "max": 0.9999616999165033,
+      "mean": 0.9999301909824423,
+      "min": 0.9998899097558784
+    },
+    "paired_minus_shuffle": {
+      "max": 0.3796619869780279,
+      "mean": 0.28825339105380443,
+      "min": 0.16955231037312446
+    },
+    "shuffled_alignment": {
+      "max": 0.8303457479806229,
+      "mean": 0.7116767999286379,
+      "min": 0.6202815417938257
+    },
+    "spatial_response_separation": {
+      "max": 0.27877636318660465,
+      "mean": 0.27877636318660465,
+      "min": 0.27877636318660465
+    }
+  },
+  "n_compartments": 12,
+  "seeds": 64,
+  "train_steps": 400,
+  "verdicts": {
+    "KNEE_RETAINS_ROLE": true,
+    "PASS_CABLE_INVARIANTS": true,
+    "PASS_DISTRIBUTED_SCALAR_LEARNING": true,
+    "PASS_GEOMETRY_EXPANDS_PING": true
+  },
+  "version": "v0"
+}
