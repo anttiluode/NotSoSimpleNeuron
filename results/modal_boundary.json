@@ -1,0 +1,28 @@
+{
+  "active_boundary": {
+    "active_cross_mode_ratio": 0.5822962081982901,
+    "gain_zero_cross_mode_ratio": 2.3019776037783286e-11,
+    "relative_jacobian_change": 1.1642924201419986,
+    "resident_state_jacobian_rotation_degrees": 34.31680585817232
+  },
+  "claim_boundary": {
+    "active_locality_creates_state_conditioned_cross_mode_coupling": true,
+    "fixed_modal_bank_exact_for_linear_gate": true,
+    "linear_morphology_unique_expressivity": false,
+    "note": "this does not prove morphology is uniquely efficient; it identifies where the fixed LTI modal collapse stops being globally valid"
+  },
+  "configuration": {
+    "active_compartments": 6,
+    "branches": 4,
+    "finite_difference_epsilon": 1e-06,
+    "frequency_points": 81,
+    "linear_state_count": 48,
+    "routes": 3
+  },
+  "linear_equivalence": {
+    "interpretation": "same 48-state linear machine under an orthogonal change of basis; no fit",
+    "max_cross_mode_ratio": 4.526095582795676e-16,
+    "max_transfer_error": 4.561466512776559e-15
+  },
+  "verdict": "PASS_LINEAR_IS_BASIS_ACTIVE_STATE_COUPLES_MODES"
+}
