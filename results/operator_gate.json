@@ -1,0 +1,43 @@
+{
+  "claim_boundary": {
+    "dense_state_space_equivalence": "an unconstrained linear state-space model of the same dimension can reproduce H(omega) exactly",
+    "morphology_unique_expressivity": false,
+    "operator_valued_weight": true
+  },
+  "configuration": {
+    "branches": 4,
+    "dendritic_state_count": 48,
+    "frequencies": 67,
+    "omega_max": 0.72,
+    "omega_min": 0.06,
+    "routes": 3
+  },
+  "invariants": {
+    "equal_route_charge": true,
+    "max_transfer_identity_error": 0.0,
+    "route_charge": [1.0, 1.0, 1.0]
+  },
+  "point_bank_attacker": {
+    "branch_fits": [
+      {"branch": 0, "output_gain": 0.12371739880794451, "persistence": 0.98, "spectral_radius": 0.866371744691619, "squared_error": 3.083302303207466},
+      {"branch": 1, "output_gain": 0.022961822689321836, "persistence": 0.98, "spectral_radius": 0.9268225288586805, "squared_error": 0.35508664027401005},
+      {"branch": 2, "output_gain": 0.03223198710736035, "persistence": 0.98, "spectral_radius": 0.9603124491539198, "squared_error": 0.8102955459603718},
+      {"branch": 3, "output_gain": 0.16635922369729544, "persistence": 0.9099999999999999, "spectral_radius": 0.9595832428716125, "squared_error": 6.233277945114251}
+    ],
+    "note": "compact attacker: one two-state point resonator per branch; far fewer states than the cable bank",
+    "relative_error": 0.6345283230211246,
+    "state_count": 8
+  },
+  "route_rotation": {
+    "angular_change_degrees": 70.77896625329858,
+    "high_omega": 0.62,
+    "low_omega": 0.08,
+    "route": 0,
+    "route_0_low_high_overlap": 0.32921331281742694
+  },
+  "static_attacker": {
+    "held_relative_error": 0.8951453430215108,
+    "interpretation": "one fixed complex route-to-branch matrix cannot represent the full frequency family"
+  },
+  "verdict": "PASS_OPERATOR_VALUED_ROUTE_STATIC_WEIGHT_FAILS_POINT_BANK_IMPROVES"
+}
