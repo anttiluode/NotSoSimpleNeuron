@@ -28,8 +28,8 @@ def test_linear_point_score_sum_identity_blocks_perfect_threshold_separation():
     assert np.isclose(positive_scores.sum(), negative_scores.sum(), atol=1e-12)
 
 
-def test_one_v1_world_passes_all_controls():
-    result = run_v1_world(0)
+def test_one_nominal_v1_world_passes_all_controls():
+    result = run_v1_world(0, regime="nominal")
 
     assert result["passive_gap"] < 1e-12
     assert result["centroid_gap"] < 1e-12
@@ -40,12 +40,21 @@ def test_one_v1_world_passes_all_controls():
     assert result["verdict"] == "PASS_ACTIVE_LOCAL_INTERACTION"
 
 
-def test_64_world_v1_suite_has_positive_worst_case_margin():
+def test_64_world_v1_suite_keeps_nominal_gate_and_stress_boundary():
     receipt = run_v1_suite(seeds=64)
+    nominal = receipt["nominal"]
+    stress = receipt["stress"]
 
     assert receipt["seeds"] == 64
-    assert receipt["all_pass"] is True
-    assert receipt["worst_active_margin"] > 0.05
-    assert receipt["mean_active_ratio"] > 1.05
-    assert receipt["max_passive_gap"] < 1e-12
-    assert receipt["max_gain_zero_gap"] < 1e-12
+    assert nominal["all_pass"] is True
+    assert nominal["worst_active_margin"] > 0.20
+    assert nominal["mean_active_ratio"] > 1.20
+    assert nominal["max_passive_gap"] < 1e-12
+    assert nominal["max_gain_zero_gap"] < 1e-12
+
+    # The broad range is deliberately not tuned into a universal success.
+    assert 0.90 < stress["pass_fraction"] < 1.0
+    assert stress["worst_active_margin"] < 0.0
+    assert len(stress["reversal_worlds"]) >= 1
+    assert stress["max_passive_gap"] < 1e-12
+    assert stress["max_gain_zero_gap"] < 1e-12
