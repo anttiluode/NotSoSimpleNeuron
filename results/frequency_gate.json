@@ -1,0 +1,77 @@
+{
+  "configuration": {
+    "burn_in": 8,
+    "compartments": 12,
+    "fast_interval": 4,
+    "frequency_points": 257,
+    "ping_count": 24,
+    "preferred_interval": 20,
+    "recovery_coupling": 0.15,
+    "recovery_decay": 0.8,
+    "recovery_gain": 0.5,
+    "site": 5
+  },
+  "interpretation": {
+    "attacker": "point result is reported; a point win does not invalidate temporal addressing",
+    "passive": "rate selectivity without resonance: local transfer peaks at DC",
+    "quasi_active": "one recovery state creates a non-zero-frequency preference"
+  },
+  "passive": {
+    "dc_gain": 3.9565812312734345,
+    "peak_frequency": 0.0,
+    "peak_gain": 3.9565812312734345,
+    "peak_to_dc": 1.0
+  },
+  "ping_probe": {
+    "equal_total_charge": true,
+    "passive_fast": {
+      "interval": 4,
+      "last_post_ping_voltage": 1.5323277301955414,
+      "mean_post_ping_voltage": 1.5287790477753995,
+      "ping_count": 24,
+      "total_charge": 24.0
+    },
+    "passive_fast_minus_preferred": 0.4975102363824151,
+    "passive_preferred": {
+      "interval": 20,
+      "last_post_ping_voltage": 1.031268813799346,
+      "mean_post_ping_voltage": 1.0312688113929844,
+      "ping_count": 24,
+      "total_charge": 24.0
+    },
+    "resonant_fast": {
+      "interval": 4,
+      "last_post_ping_voltage": 0.8796830035949625,
+      "mean_post_ping_voltage": 0.8794697891447956,
+      "ping_count": 24,
+      "total_charge": 24.0
+    },
+    "resonant_preferred": {
+      "interval": 20,
+      "last_post_ping_voltage": 1.0265256428227572,
+      "mean_post_ping_voltage": 1.0265256428605503,
+      "ping_count": 24,
+      "total_charge": 24.0
+    },
+    "resonant_preferred_minus_fast": 0.1470558537157547,
+    "total_charge_each": 24.0
+  },
+  "point_attacker": {
+    "branch_peak_to_dc": 1.919100148376498,
+    "outcome": "POINT_MATCHES_OR_BEATS",
+    "persistence": 0.98,
+    "point_peak_frequency": 0.28225246497095796,
+    "point_peak_to_dc": 3.2023433417673632,
+    "selectivity_delta_point_minus_branch": 1.2832431933908652,
+    "spectral_radius": 0.9268225288586805
+  },
+  "resonant": {
+    "dc_gain": 1.3676514122693069,
+    "peak_frequency": 0.3190680038802134,
+    "peak_gain": 2.624660028213354,
+    "peak_period_steps": 19.69230769230769,
+    "peak_to_dc": 1.919100148376498,
+    "spectral_radius": 0.9005553841935547
+  },
+  "verdict": "PASS_TEMPORAL_ADDRESSING_POINT_NOT_NEEDED_FOR_CLAIM"
+}

@@ -1,0 +1,46 @@
+{
+  "nominal": {
+    "all_pass": true,
+    "max_centroid_gap": 0.0,
+    "max_gain_zero_gap": 0.0,
+    "max_linear_score_sum_error": 8.881784197001252e-16,
+    "max_passive_gap": 0.0,
+    "mean_active_margin": 0.42999679167023463,
+    "mean_active_ratio": 1.4317477901988909,
+    "pass_count": 64,
+    "pass_fraction": 1.0,
+    "regime": "nominal",
+    "reversal_worlds": [],
+    "worst_active_margin": 0.30203965051106074
+  },
+  "seeds": 64,
+  "stress": {
+    "all_pass": false,
+    "max_centroid_gap": 0.0,
+    "max_gain_zero_gap": 1.1102230246251565e-16,
+    "max_linear_score_sum_error": 8.881784197001252e-16,
+    "max_passive_gap": 1.1102230246251565e-16,
+    "mean_active_margin": 0.398905439228482,
+    "mean_active_ratio": 1.4039786377353833,
+    "pass_count": 63,
+    "pass_fraction": 0.984375,
+    "regime": "stress",
+    "reversal_worlds": [
+      {
+        "active_margin": -0.01166908622968399,
+        "active_ratio": 0.9910971461663522,
+        "parameters": {
+          "a": 2,
+          "b": 7,
+          "coupling": 0.12003744422052043,
+          "gain": 0.6012157248085813,
+          "leak": 0.052857698658560624,
+          "slope": 0.01678438086087215,
+          "threshold": 0.30866393857851265
+        },
+        "seed": 25
+      }
+    ],
+    "worst_active_margin": -0.01166908622968399
+  }
+}
