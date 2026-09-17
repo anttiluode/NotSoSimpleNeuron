@@ -8,14 +8,15 @@ This repository starts from a question that fell out of [`SimpleNeuron`](https:/
 
 The answer has become deliberately more precise as attackers remove weaker stories. A route is not being treated as a magic vector-valued synapse. It is a sparse physical access pattern into receiver dynamics. The effective transformation can depend on spatial landing pattern, event timing, resident state, and event order.
 
-The project currently has six separate gates:
+The project currently has seven separate gates:
 
 1. **distributed spatial route** — several ordinary scalar contacts on one passive cable;
 2. **temporal addressing** — timing is decoded by receiver dynamics, although a point resonator beats the single-site cable;
 3. **active local interaction** — nearby equal-charge inputs recruit a local voltage-dependent interaction that passive superposition cannot;
 4. **operator-valued route** — one unchanged route exposes different effective branch-state directions across frequency;
 5. **modal boundary** — the full linear/quasi-active cable bank is exactly a modal state-space realization, while local active state breaks the fixed modal decomposition;
-6. **event-order gate** — the first event changes the local operator encountered by the second, producing noncommuting local Jacobians in the synthetic active branch.
+6. **event-order gate** — the first event changes the local operator encountered by the second, producing noncommuting local Jacobians in the synthetic active branch;
+7. **operator-composition gate** — the full two-event derivative is reconstructed by composing context-specific one-step Jacobians, while one fixed operator cannot represent both event orders.
 
 Every extra mechanism gets a control or attacker. Negative boundaries stay in the result.
 
@@ -243,6 +244,46 @@ This is a deterministic mechanism witness. It does not establish that real dendr
 
 ---
 
+## v5 — event sequences compose state-conditioned operators
+
+v4 showed that the first event changes the local Jacobian. v5 asks the stricter follow-up: can the **two-event transformation itself** be reconstructed as a composition of the one-step local operators encountered along that particular history?
+
+The state for this gate is the full synthetic branch state,
+
+```text
+s = [voltage, conductance]
+```
+
+so the conductance trace is not silently frozen. For A then B, the local chain-rule prediction is
+
+```text
+J_AB = J_B(after A) @ J_A(initial)
+```
+
+and analogously for B then A.
+
+The gain-zero control still keeps dynamical history. A->B and B->A can therefore end at different voltages, but the derivative of the fixed linear machine with respect to its full starting state should not depend on event labels/order. The active branch is different: the first event changes the susceptibility encountered by the second.
+
+Frozen deterministic `results/composition_gate.json`:
+
+| Quantity | Gain-zero control | Active branch |
+|---|---:|---:|
+| A->B vs B->A two-step Jacobian gap ratio | **7.20e-11** | **0.601361** |
+| chain-rule reconstruction error | **7.07e-11** | **9.55e-7** |
+| best single fixed operator error across both orders | **3.60e-11** | **0.299312** |
+
+The active A->B and B->A operator norms are **2.704966** and **3.277752**. Their difference is therefore not a tiny numerical perturbation, yet each history-specific two-step operator is reconstructed by composing the local Jacobians along that history to roughly one part in a million.
+
+This earns a more precise statement than “history matters”:
+
+> **in this synthetic active branch, a routed event sequence is locally described by composition of state-conditioned operations; one fixed local matrix does not represent both histories.**
+
+The chain rule itself is of course not a discovery. It is the consistency check that tells us *where the computation is*: the first event moves the resident state, that state changes the next local operator, and the resulting operators compose along the trajectory.
+
+This still does not establish unique dendritic expressivity. A sufficiently general nonlinear state-space model can implement state-conditioned Jacobians too. The remaining morphology question is therefore about **factorization, locality, parameter/state economy, and learnability**, not existence of nonlinear sequence computation.
+
+---
+
 ## What carries the load now?
 
 The project began by asking what replaces a conventional scalar/vector "weight" when the travelling event itself is tiny.
@@ -284,7 +325,8 @@ large state stays;
 landing geometry expands;
 timing selects dynamics;
 local state changes the operator;
-event order changes what the next event encounters.
+event order changes what the next event encounters;
+sequence computation is the composition of those encountered operators.
 ```
 
 ---
@@ -298,15 +340,16 @@ The completed gates have progressively removed easy stories:
 3. ~~local active interaction~~ — **DONE**;
 4. ~~branch bank / operator-valued route~~ — **DONE**;
 5. ~~exact modal realization boundary~~ — **DONE; linear morphology is a basis/realization, not unique expressivity**;
-6. ~~state-conditioned event order~~ — **DONE; active local Jacobians differ and fail to commute in the frozen fixture**.
+6. ~~state-conditioned event order~~ — **DONE; active local Jacobians differ and fail to commute in the frozen fixture**;
+7. ~~state-conditioned operator composition~~ — **DONE; history-specific local Jacobians compose the two-step maps while one fixed operator fails across orders**.
 
 The next useful fight is to combine v1 and v2 rather than add decorative biology:
 
-7. **distributed nonlinear branch bank** — let one sparse route touch several branches, each with local active state, and test whether the resulting state-conditioned operator family can be matched by a degree/parameter-matched non-spatial nonlinear state-space attacker;
-8. **local inhibition** — only if gate 7 survives, add SOM-like branch gating and ask whether it selectively changes which local operator participates;
-9. **perisomatic correction** — PV/basket-like control of the soma mixture without erasing branch state;
-10. **spatial AIS** — proximal/distal AIS plus chandelier-like inhibition, explicitly testing whether landing position is functionally non-equivalent;
-11. **growth-to-purity** — permit structural growth only when an added physical degree of freedom improves held-out separation against matched attackers.
+8. **distributed nonlinear branch bank** — let one sparse route touch several branches, each with local active state, and test whether the resulting state-conditioned operator family can be matched by a degree/parameter-matched non-spatial nonlinear state-space attacker;
+9. **local inhibition** — only if gate 8 survives, add SOM-like branch gating and ask whether it selectively changes which local operator participates;
+10. **perisomatic correction** — PV/basket-like control of the soma mixture without erasing branch state;
+11. **spatial AIS** — proximal/distal AIS plus chandelier-like inhibition, explicitly testing whether landing position is functionally non-equivalent;
+12. **growth-to-purity** — permit structural growth only when an added physical degree of freedom improves held-out separation against matched attackers.
 
 The next scientific target is therefore not "more resonance." It is whether **physical locality makes a state-dependent operator cheaper or more naturally factorized than an equally capable non-spatial dynamical model**.
 
@@ -336,9 +379,10 @@ python experiments/run_v1.py --seeds 64 --out results/v1_full.json
 python experiments/run_operator_gate.py --out results/operator_gate_full.json
 python experiments/run_modal_boundary.py --out results/modal_boundary_full.json
 python experiments/run_order_gate.py --out results/order_gate_full.json
+python experiments/run_composition_gate.py --out results/composition_gate_full.json
 ```
 
-CI runs Python 3.11 and 3.12 and executes smoke runs for all six gates.
+CI runs Python 3.11 and 3.12 and executes smoke runs for all seven gates.
 
 ---
 
@@ -368,6 +412,7 @@ The current evidence is intentionally mixed:
 - **linear cable dynamics are exactly realizable in modal coordinates**;
 - **local nonlinear state breaks the globally fixed modal decomposition**;
 - **event order changes the local active operator in the frozen synthetic gate**;
+- **history-specific operators compose consistently along a sequence, while one fixed operator fails across the two orders**;
 - morphology still has **not** earned a universal computational advantage.
 
 That is the standard this repository is meant to enforce.
