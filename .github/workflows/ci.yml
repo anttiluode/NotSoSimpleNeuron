@@ -24,3 +24,4 @@ jobs:
       - run: python experiments/run_operator_gate.py --out /tmp/not_so_simple_operator.json
       - run: python experiments/run_modal_boundary.py --out /tmp/not_so_simple_modal_boundary.json
       - run: python experiments/run_order_gate.py --out /tmp/not_so_simple_order.json
+      - run: python experiments/run_composition_gate.py --out /tmp/not_so_simple_composition.json
